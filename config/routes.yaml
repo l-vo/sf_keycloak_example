@@ -1,0 +1,13 @@
+home:
+  path: /
+  controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
+  defaults:
+    template: home/index.html.twig
+    context:
+      keycloakHome: '%app.keycloak_base%'
+
+logout:
+  path: /logout
+
+openid_redirecturi:
+  path: /redirect-uri

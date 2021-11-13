@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+    <p>Keycloak admin: <a href="{{ keycloakHome }}">{{ keycloakHome }}</a> (admin / admin)</p>
+    {% if app.user is null %}
+    <p>
+        <a href="{{ path('profile') }}" class="btn btn-dark">Connect with Openid</a>
+    </p>
+    {% endif %}
+{% endblock %}

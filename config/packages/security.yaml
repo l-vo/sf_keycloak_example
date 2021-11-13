@@ -1,0 +1,19 @@
+security:
+    enable_authenticator_manager: true
+
+    providers:
+        keycloak:
+            id: App\Security\OpenIdUserProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            custom_authenticator: App\Security\OpenIdAuthenticator
+            logout:
+                path: logout
+
+    access_control:
+        - { path: ^/profile, roles: ROLE_USER }

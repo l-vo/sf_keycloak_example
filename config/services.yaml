@@ -1,0 +1,41 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    app.keycloak_base: '%env(KEYCLOAK_BASE)%'
+    app.keycloak_authorization: '%app.keycloak_base%/auth/realms/master/protocol/openid-connect/auth'
+    app.keycloak_token_endpoint: '/auth/realms/master/protocol/openid-connect/token'
+    app.keycloak_logout_endpoint: '/auth/realms/master/protocol/openid-connect/logout'
+    app.keycloak_clientid: '%env(KEYCLOAK_CLIENDID)%'
+    app.keycloak_clientsecret: '%env(KEYCLOAK_CLIENTSECRET)%'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    App\Security\OpenIdAuthenticator:
+        $authorizationEndpoint: '%app.keycloak_authorization%'
+        $clientId: '%app.keycloak_clientid%'
+
+    App\Security\Client\OpenIdClient:
+        $clientId: '%app.keycloak_clientid%'
+        $clientSecret: '%app.keycloak_clientsecret%'
+        $tokenEndpoint: '%app.keycloak_token_endpoint%'
+        $logoutEndpoint: '%app.keycloak_logout_endpoint%'
+
+    App\Security\OpenIdUserProvider:
+        $publicKey: '%env(KEYCLOAK_PK)%'
