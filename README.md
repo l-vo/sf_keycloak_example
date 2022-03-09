@@ -23,7 +23,7 @@ Go to the *Credentials* tab and copy the *Secret* field content somewhere. You a
 We are going to add a specific role for the application. Go to *Roles* menu entry, click on the *Add Role* button, type `ROLE_USER` as *role name* (case matters) and save your modification.
 
 ### User creation
-Let's create an user for logging into our Symfony application. Go to the *Users* link in the menu and click on the *Add user* button. Fill the *username*, *email*, *first name* and *last name* fields. Then save the user.
+Let's create an user for logging into our Symfony application. Go to the *Users* link from the left menu and click on the *Add user* button. Fill the *username*, *email*, *first name* and *last name* fields. Then save the user.
 
 Some extra configuration options are now available. Go to the *Credentials* tab, chose a password, disable the *temporary* feature and save your modifications (a confirmation modal should appear, you can confirm your modifications).
 
