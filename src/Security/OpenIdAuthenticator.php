@@ -70,7 +70,7 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
             throw new OpenIdServerException(sprintf('Can\'t parse json in response: %s', $response->getContent()));
         }
 
-        $jwtToken = $responseData['access_token'] ?? null;
+        $jwtToken = $responseData['id_token'] ?? null;
         if (null === $jwtToken) {
             throw new OpenIdServerException(sprintf('No access token found in response %s', $response->getContent()));
         }
@@ -113,7 +113,9 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
             'client_id' => $this->clientId,
             'response_type' => 'code',
             'state' => $state,
-            // redirect_uri and scopes can also be passed
+            'scope' => 'openid roles profile email',
+            // Force http since working on localhost
+            'redirect_uri' => 'http:'.$this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::NETWORK_PATH),
         ]);
 
         return new RedirectResponse(sprintf('%s?%s', $this->authorizationEndpoint, $qs));

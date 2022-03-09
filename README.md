@@ -23,11 +23,14 @@ Go to the *Credentials* tab and copy the *Secret* field content somewhere. You a
 We are going to add a specific role for the application. Go to *Roles* menu entry, click on the *Add Role* button, type `ROLE_USER` as *role name* (case matters) and save your modification.
 
 ### User creation
-Let's create an user for logging into our Symfony application. Go to the *Users* link in the menu and click on the *Add user* button. Fill the *username*, *email*, *first name* and *last name* fields. Then save the user.
+Let's create an user for logging into our Symfony application. Go to the *Users* link from the left menu and click on the *Add user* button. Fill the *username*, *email*, *first name* and *last name* fields. Then save the user.
 
 Some extra configuration options are now available. Go to the *Credentials* tab, chose a password, disable the *temporary* feature and save your modifications (a confirmation modal should appear, you can confirm your modifications).
 
 You also need to add the `ROLE_USER` previously created to your user to be allowed to access to the profile page in the Symfony application. Go to *Role Mapping* and move `ROLE_USER` from *Available roles* to *Assigned roles*.
+
+### Add roles to ID token
+By default, role are not present in the ID token. To be allowed to get roles from the ID token, go to *Client Scopes* (left menu) and click on the *roles* scope. Then chose the *Mappers* tab, edit the *realm roles* line and set the *Add to ID token* toggle to `ON`. Save your modification. For a sake of transparency, in the settings tab, swith on the *Include In Token Scope* toggle. Otherwise roles won't be displayed in the scope list of keycloak responses.
 
 ### Public key
 Keycloak configuration is done. But you need the public key to check JWT signature. Go to the menu entry *Realm Settings* and chose the *Keys* tab. Click on the *Public Key* button of the `RSA256` algorythm for a signing (`SIG`) usage. Copy the displayed value somewhere.
