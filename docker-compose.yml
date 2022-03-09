@@ -1,3 +1,5 @@
+version: '2'
+
 services:
   keycloak:
     image: jboss/keycloak:15.0.1
