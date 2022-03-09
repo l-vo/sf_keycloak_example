@@ -63,7 +63,7 @@ final class JwtRefreshListener implements EventSubscriberInterface
             throw new RuntimeException(sprintf('Can\'t parse json in response: %s', $response->getContent()));
         }
 
-        $jwtToken = $responseData['access_token'] ?? null;
+        $jwtToken = $responseData['id_token'] ?? null;
         if (null === $jwtToken) {
             throw new RuntimeException(sprintf('No access token found in response %s', $response->getContent()));
         }
