@@ -2,12 +2,14 @@
 
 namespace App\Security\Client;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class OpenIdClient
 {
     public function __construct(
         private HttpClientInterface $keycloakClient,
+        private UrlGeneratorInterface $urlGenerator,
         private string $clientId,
         private string $clientSecret,
         private string $tokenEndpoint,
@@ -20,6 +22,8 @@ final class OpenIdClient
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
             'grant_type' => 'authorization_code',
+            // Force http since working on localhost
+            'redirect_uri' => 'http:'.$this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::NETWORK_PATH),
             'code' => $authorizationCode,
         ]);
     }
