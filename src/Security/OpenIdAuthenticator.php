@@ -56,6 +56,8 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
             ));
         }
 
+        $request->getSession()->remove(self::STATE_SESSION_KEY);
+
         try {
             $response = $this->openIdClient->getTokenFromAuthorizationCode($request->query->get('code', ''));
         } catch (HttpExceptionInterface $e) {
