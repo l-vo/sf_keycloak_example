@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use LogicException;
@@ -13,12 +15,13 @@ final class OpenIdUserProvider implements UserProviderInterface
 {
     public function __construct(
         private RequestStack $requestStack,
+        private UserRepository $userRepository,
         private string $publicKey,
     ) {}
 
     public function refreshUser(UserInterface $user): UserInterface
     {
-        return $user;
+        return $this->userRepository->find($user->getId());
     }
 
     public function supportsClass(string $class): bool
@@ -41,13 +44,19 @@ final class OpenIdUserProvider implements UserProviderInterface
         }
         $currentRequest->attributes->set('_app_jwt_expires', $decoded->exp);
 
-        // Extra user information from local database can also be added here
-        return new User(
-            $decoded->sub,
-            $decoded->preferred_username,
-            $decoded->email,
-            $decoded->name,
-            $decoded->realm_access->roles,
-        );
+        $user = $this->userRepository->findOneByEmail($decoded->email);
+
+        if ($user === null) {
+            $user = new User();
+        }
+
+        $user->setEmail($decoded->email);
+        $user->setFullName($decoded->name);
+        $user->setUsername($decoded->preferred_username);
+        $user->setRoles($decoded->realm_access->roles);
+        $user->setPassword('');
+        $this->userRepository->saveUser($user);
+
+        return $user;
     }
 }

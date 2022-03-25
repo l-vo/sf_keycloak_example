@@ -33,10 +33,12 @@
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners>
 
-    <!-- Run `composer require symfony/panther` before enabling this extension -->
-    <!--
     <extensions>
-        <extension class="Symfony\Component\Panther\ServerExtension" />
+        <!-- it begins a database transaction before every testcase and rolls it back after
+             the test finished, so tests can manipulate the database without affecting other tests -->
+        <extension class="\DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+
+        <!-- Run `composer require symfony/panther` before enabling this extension -->
+        <!-- <extension class="Symfony\Component\Panther\ServerExtension" /> -->
     </extensions>
-    -->
 </phpunit>

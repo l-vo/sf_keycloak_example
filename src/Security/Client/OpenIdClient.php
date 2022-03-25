@@ -23,7 +23,7 @@ final class OpenIdClient
             'client_secret' => $this->clientSecret,
             'grant_type' => 'authorization_code',
             // Force http since working on localhost
-            'redirect_uri' => 'http:'.$this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::NETWORK_PATH),
+            'redirect_uri' => $this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::ABSOLUTE_URL),
             'code' => $authorizationCode,
         ]);
     }

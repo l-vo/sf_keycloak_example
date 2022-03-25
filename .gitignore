@@ -1,3 +1,5 @@
+/public/build/fonts/glyphicons-*
+/public/build/images/glyphicons-*
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -13,12 +15,8 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
-
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###
-
-###> docker ###
-/docker-compose.override.yml
-###< docker ###
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###

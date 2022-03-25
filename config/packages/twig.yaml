@@ -1,5 +1,10 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    form_themes:
+        - 'form/layout.html.twig'
+        - 'form/fields.html.twig'
+    globals:
+        keycloak_authorization_url: '%app.keycloak_authorization%'
 
 when@test:
     twig:

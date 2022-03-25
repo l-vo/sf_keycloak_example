@@ -2,10 +2,11 @@
 
 namespace App\Security\Listener;
 
+use App\Entity\User;
 use App\Security\Client\OpenIdClient;
 use App\Security\Dto\TokensBag;
-use App\Security\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
 
@@ -33,8 +34,20 @@ final class LogoutListener implements EventSubscriberInterface
         $this->openIdClient->logout($tokens->getJwt(), $tokens->getRefreshToken());
     }
 
+    public function redirectToTargetPath(LogoutEvent $event): void
+    {
+       if ($targetPath = $event->getRequest()->query->get('target_path')) {
+           $event->setResponse(new RedirectResponse($targetPath));
+       }
+    }
+
     public static function getSubscribedEvents(): array
     {
-        return [LogoutEvent::class => 'logoutFromOpenidProvider'];
+        return [
+            LogoutEvent::class => [
+                ['logoutFromOpenidProvider', 0],
+                ['redirectToTargetPath', 128],
+            ]
+        ];
     }
 }

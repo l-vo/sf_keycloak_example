@@ -1,0 +1,24 @@
+services:
+  smtp:
+    image: schickling/mailcatcher
+    ports: [52002:1080]
+
+  keycloak:
+    labels:
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.keycloak.entrypoints=web"
+      - "traefik.http.routers.keycloak.rule=Host(`keycloak.tld`)"
+      - "traefik.http.routers.keycloak-secure.entrypoints=websecure"
+      - "traefik.http.routers.keycloak-secure.rule=Host(`keycloak.tld`)"
+      - "traefik.http.routers.keycloak-secure.tls=true"
+      - "traefik.http.services.http-keycloak.loadbalancer.server.port=8443"
+      - "traefik.http.services.http-keycloak.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.keycloak-secure.tls.domains[0].main=keycloak.tld"
+      - "traefik.http.routers.keycloak.middlewares=https-redirect@file"
+    networks:
+      - default
+      - traefik
+
+networks:
+  traefik:
+    external: true

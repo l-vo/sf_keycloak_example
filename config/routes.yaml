@@ -1,13 +1,18 @@
-home:
-  path: /
-  controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
-  defaults:
-    template: home/index.html.twig
-    context:
-      keycloakHome: '%app.keycloak_base%'
+# These lines define a route using YAML configuration. The controller used by
+# the route (FrameworkBundle:Template:template) is a convenient shortcut when
+# the template can be rendered without executing any logic in your own controller.
+# See https://symfony.com/doc/current/templates.html#rendering-a-template-directly-from-a-route
+homepage:
+    path: /{_locale}
+    controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController::templateAction
+    requirements:
+        _locale: '%app_locales%'
+    defaults:
+        template: default/homepage.html.twig
+        _locale: '%locale%'
 
 logout:
-  path: /logout
+    path: /logout
 
 openid_redirecturi:
-  path: /redirect-uri
+    path: /redirect-uri

@@ -14,13 +14,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticatedUserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Uid\Uuid;
@@ -35,6 +35,7 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
         private UrlGeneratorInterface $urlGenerator,
         private OpenIdClient $openIdClient,
         private RequestStack $requestStack,
+        private AuthorizationCheckerInterface $authorizationChecker,
         private string $authorizationEndpoint,
         private string $clientId,
     ) {}
@@ -44,7 +45,7 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
         return 'openid_redirecturi' === $request->attributes->get('_route');
     }
 
-    public function authenticate(Request $request): PassportInterface
+    public function authenticate(Request $request): Passport
     {
         $sessionState = $request->getSession()->get(self::STATE_SESSION_KEY);
         $queryState = $request->get(self::STATE_QUERY_KEY);
@@ -55,8 +56,6 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
                 $sessionState ?? 'NULL',
             ));
         }
-
-        $request->getSession()->remove(self::STATE_SESSION_KEY);
 
         try {
             $response = $this->openIdClient->getTokenFromAuthorizationCode($request->query->get('code', ''));
@@ -91,41 +90,56 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
         return $passport;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): RedirectResponse
     {
-        return new RedirectResponse($this->urlGenerator->generate('profile'));
+        $encodedState = $request->getSession()->remove(self::STATE_SESSION_KEY);
+        $state = json_decode(urldecode($encodedState), true);
+
+        if ($targetPath = $state['target_path'] ?? null) {
+            return new RedirectResponse($targetPath);
+        }
+
+        $redirectRoute = $this->authorizationChecker->isGranted('ROLE_ADMIN') ? 'admin_index' : 'homepage';
+
+        return new RedirectResponse($this->urlGenerator->generate($redirectRoute));
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): RedirectResponse
     {
         $request->getSession()->getFlashBag()->add(
             'error',
             'An authentication error occured',
         );
 
-        return new RedirectResponse($this->urlGenerator->generate('home'));
+        return new RedirectResponse($this->urlGenerator->generate('homepage'));
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        $state = (string)Uuid::v4();
-        $request->getSession()->set(self::STATE_SESSION_KEY, $state);
+        $state = ['uuid' => Uuid::v4()];
+
+        if ($redirectPath = $request->query->get('redirect_to')) {
+            $state['target_path'] = $redirectPath;
+        }
+
+        $encodedState = urlencode(json_encode($state));
+        $request->getSession()->set(self::STATE_SESSION_KEY, $encodedState);
 
         $qs = http_build_query([
             'client_id' => $this->clientId,
             'response_type' => 'code',
-            'state' => $state,
+            'state' => $encodedState,
             'scope' => 'openid roles profile email',
             // Force http since working on localhost
-            'redirect_uri' => 'http:'.$this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::NETWORK_PATH),
+            'redirect_uri' => $this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
 
         return new RedirectResponse(sprintf('%s?%s', $this->authorizationEndpoint, $qs));
     }
 
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
+    public function createToken(Passport $passport, string $firewallName): TokenInterface
     {
-        $token = parent::createAuthenticatedToken($passport, $firewallName);
+        $token = parent::createToken($passport, $firewallName);
 
         if (!$passport instanceof Passport) {
             throw new \LogicException(sprintf('Passport must be a subclass of %s, %s given', Passport::class, get_class($passport)));
@@ -145,6 +159,7 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
         if (null === $tokens) {
             throw new \LogicException(sprintf('Can\'t find %s in passport attributes', TokensBag::class));
         }
+
         $token->setAttribute(TokensBag::class, $tokens->withExpiration($jwtExpires));
 
         return $token;

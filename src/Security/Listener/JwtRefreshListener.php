@@ -25,7 +25,7 @@ final class JwtRefreshListener implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event): void
     {
         $token = $this->tokenStorage->getToken();
-        if (null === $token) {
+        if (null === $token || !$token->hasAttribute(TokensBag::class)) {
             return;
         }
 

@@ -1,19 +1,45 @@
 security:
+    # a new authentication system is available since Symfony 5.1 to make
+    # Symfony security more extensible and easier to understand
+    # https://symfony.com/doc/current/security.html
     enable_authenticator_manager: true
+
+    password_hashers:
+        # Our user class and the algorithm we'll use to encode passwords
+        # 'auto' means to let Symfony choose the best possible password hasher (Argon2 or Bcrypt)
+        # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
     providers:
         keycloak:
             id: App\Security\OpenIdUserProvider
 
+    # https://symfony.com/doc/current/security.html#a-authentication-firewalls
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
         main:
             lazy: true
             custom_authenticator: App\Security\OpenIdAuthenticator
             logout:
                 path: logout
 
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/profile, roles: ROLE_USER }
+        # this is a catch-all for the admin area
+        # additional security lives in the controllers
+        - { path: '^/(%app_locales%)/admin', roles: ROLE_ADMIN }
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+
+when@test:
+    # this configuration simplifies testing URLs protected by the security mechanism
+    # See https://symfony.com/doc/current/testing/http_authentication.html
+    security:
+        firewalls:
+            main:
+                http_basic: ~
