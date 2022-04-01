@@ -5,14 +5,14 @@ namespace App\Security\Dto;
 final class TokensBag
 {
     public function __construct(
-        private string $jwt,
+        private string $accessToken,
         private string $refreshToken,
-        private ?int $jwtExpires = null,
+        private ?int   $jwtExpires = null,
     ) {}
 
-    public function getJwt(): string
+    public function getAccessToken(): string
     {
-        return $this->jwt;
+        return $this->accessToken;
     }
 
     public function getJwtExpires(): int
@@ -31,7 +31,7 @@ final class TokensBag
 
     public function withExpiration(int $jwtExpires): static
     {
-        $static = new static($this->jwt, $this->refreshToken);
+        $static = new static($this->accessToken, $this->refreshToken);
         $static->jwtExpires = $jwtExpires;
 
         return $static;
