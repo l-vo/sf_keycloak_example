@@ -47,7 +47,7 @@ final class JwtRefreshListener implements EventSubscriberInterface
             if (400 === $response->getStatusCode() && 'invalid_grant' === ($response->toArray(false)['error'] ?? null)) {
                 // Logout when SSO session idle is reached
                 $this->tokenStorage->setToken(null);
-                $event->setResponse(new RedirectResponse($this->urlGenerator->generate('home')));
+                $event->setResponse(new RedirectResponse($this->urlGenerator->generate('homepage')));
 
                 return;
             }
