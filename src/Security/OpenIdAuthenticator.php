@@ -86,7 +86,7 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
 
         $passport = new SelfValidatingPassport($userBadge, [new PreAuthenticatedUserBadge()]);
 
-        $passport->setAttribute(TokensBag::class, new TokensBag($jwtToken, $refreshToken));
+        $passport->setAttribute(TokensBag::class, new TokensBag($responseData['access_token'] ?? null, $refreshToken));
 
         return $passport;
     }
