@@ -31,7 +31,7 @@ final class LogoutListener implements EventSubscriberInterface
             throw new \LogicException(sprintf('%s token attribute is empty', TokensBag::class));
         }
 
-        $this->openIdClient->logout($tokens->getJwt(), $tokens->getRefreshToken());
+        $this->openIdClient->logout($tokens->getAccessToken(), $tokens->getRefreshToken());
     }
 
     public function redirectToTargetPath(LogoutEvent $event): void

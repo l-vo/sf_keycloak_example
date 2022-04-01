@@ -82,7 +82,11 @@ final class JwtRefreshListener implements EventSubscriberInterface
         }
         $request->attributes->remove('_app_jwt_expires');
 
-        $token->setAttribute(TokensBag::class, new TokensBag($jwtToken, $refreshToken, $jwtExpires));
+        $token->setAttribute(TokensBag::class, new TokensBag(
+            $responseData['access_token'] ?? null,
+            $refreshToken,
+            $jwtExpires,
+        ));
 
         $token->setUser($user);
     }
