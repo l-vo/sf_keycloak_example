@@ -7,8 +7,20 @@ services:
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+
+  postgres:
+    image: postgres:14.2
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
     volumes:
-      - keycloak_data:/data
+      - keycloak_data:/var/lib/postgresql/data
+
 
 volumes:
   keycloak_data: ~
