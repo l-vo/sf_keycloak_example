@@ -54,6 +54,7 @@ services:
     App\Security\Jwt\IdTokenDataExtractor:
         $keycloakBase: '%app.keycloak_base%'
         $keycloakClientName: '%app.keycloak_client_name%'
+        $algo: '%env(KEYCLOAK_ALGO)%'
         $publicKey: '%env(KEYCLOAK_PK)%'
 
 when@test:
