@@ -4,10 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    app.keycloak_home: '%env(KEYCLOAK_HOME)%'
     app.keycloak_base: '%env(KEYCLOAK_BASE)%'
-    app.keycloak_authorization: '%app.keycloak_base%/auth/realms/master/protocol/openid-connect/auth'
-    app.keycloak_token_endpoint: '/auth/realms/master/protocol/openid-connect/token'
-    app.keycloak_logout_endpoint: '/auth/realms/master/protocol/openid-connect/logout'
+    app.keycloak_authorization: '%app.keycloak_base%/protocol/openid-connect/auth'
+    app.keycloak_token_endpoint: '%app.keycloak_base%/protocol/openid-connect/token'
+    app.keycloak_logout_endpoint: '%app.keycloak_base%/protocol/openid-connect/logout'
     app.keycloak_clientid: '%env(KEYCLOAK_CLIENDID)%'
     app.keycloak_clientsecret: '%env(KEYCLOAK_CLIENTSECRET)%'
 
@@ -37,5 +38,7 @@ services:
         $tokenEndpoint: '%app.keycloak_token_endpoint%'
         $logoutEndpoint: '%app.keycloak_logout_endpoint%'
 
-    App\Security\OpenIdUserProvider:
+    App\Security\Jwt\IdTokenDataExtractor:
+        $keycloakBase: '%app.keycloak_base%'
+        $keycloakClientId: '%app.keycloak_clientid%'
         $publicKey: '%env(KEYCLOAK_PK)%'

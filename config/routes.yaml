@@ -4,7 +4,7 @@ home:
   defaults:
     template: home/index.html.twig
     context:
-      keycloakHome: '%app.keycloak_base%'
+      keycloakHome: '%app.keycloak_home%'
 
 logout:
   path: /logout
