@@ -10,12 +10,13 @@ final class IdTokenDataExtractor
     public function __construct(
         private string $keycloakBase,
         private string $keycloakClientId,
+        private string $algo,
         private string $publicKey,
     ) {}
 
     public function extract(string $idToken): IdTokenData
     {
-        $decoded = JWT::decode($idToken, new Key($this->publicKey, 'RS256'));
+        $decoded = JWT::decode($idToken, new Key($this->publicKey, $this->algo));
 
         $iat = $decoded->iat ?? PHP_INT_MAX;
         if (time() > $iat) {
