@@ -8,12 +8,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 final class OpenIdClient
 {
     public function __construct(
-        private HttpClientInterface $keycloakClient,
+        private HttpClientInterface   $httpClient,
         private UrlGeneratorInterface $urlGenerator,
-        private string $clientId,
-        private string $clientSecret,
-        private string $tokenEndpoint,
-        private string $logoutEndpoint,
+        private string                $clientId,
+        private string                $clientSecret,
+        private string                $tokenEndpoint,
+        private string                $logoutEndpoint,
     ) {}
 
     public function getTokenFromAuthorizationCode(string $authorizationCode): string
@@ -40,7 +40,8 @@ final class OpenIdClient
 
     private function callTokenEntryPoint(array $body): string
     {
-        $response = $this->keycloakClient->request('POST', $this->tokenEndpoint, [
+        //dump($this->keycloakClient);
+        $response = $this->httpClient->request('POST', $this->tokenEndpoint, [
             'body' => $body,
         ]);
 
@@ -49,7 +50,7 @@ final class OpenIdClient
 
     public function logout(string $jwtToken, string $refreshToken): void
     {
-        $this->keycloakClient->request('POST', $this->logoutEndpoint, [
+        $this->httpClient->request('POST', $this->logoutEndpoint, [
             'headers' => ['Authorization' => sprintf('Bearer %s', $jwtToken)],
             'body' => [
                 'client_id' => $this->clientId,
