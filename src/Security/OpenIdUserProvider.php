@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Security\Jwt\IdTokenDataExtractor;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use LogicException;
@@ -16,7 +17,7 @@ final class OpenIdUserProvider implements UserProviderInterface
     public function __construct(
         private RequestStack $requestStack,
         private UserRepository $userRepository,
-        private string $publicKey,
+        private IdTokenDataExtractor $idTokenDataExtractor,
     ) {}
 
     public function refreshUser(UserInterface $user): UserInterface
@@ -34,26 +35,26 @@ final class OpenIdUserProvider implements UserProviderInterface
         throw new \BadMethodCallException(sprintf('%s is depracated and should not be called', __METHOD__));
     }
 
-    public function loadUserByIdentifier(string $jwtToken): UserInterface
+    public function loadUserByIdentifier(string $idToken): UserInterface
     {
-        $decoded = JWT::decode($jwtToken, new Key($this->publicKey, 'RS256'));
+        $idTokenData = $this->idTokenDataExtractor->extract($idToken);
 
         $currentRequest = $this->requestStack->getCurrentRequest();
         if (null === $currentRequest) {
             throw new LogicException(sprintf('%s can only be used in an http context', __CLASS__));
         }
-        $currentRequest->attributes->set('_app_jwt_expires', $decoded->exp);
+        $currentRequest->attributes->set('_app_jwt_expires', $idTokenData->getExpires());
 
-        $user = $this->userRepository->findOneByEmail($decoded->email);
+        $user = $this->userRepository->findOneByEmail($idTokenData->getEmail());
 
         if ($user === null) {
             $user = new User();
         }
 
-        $user->setEmail($decoded->email);
-        $user->setFullName($decoded->name);
-        $user->setUsername($decoded->preferred_username);
-        $user->setRoles($decoded->realm_access->roles);
+        $user->setEmail($idTokenData->getEmail());
+        $user->setFullName($idTokenData->getName());
+        $user->setUsername($idTokenData->getUsername());
+        $user->setRoles($idTokenData->getRoles());
         $user->setPassword('');
         $this->userRepository->saveUser($user);
 
