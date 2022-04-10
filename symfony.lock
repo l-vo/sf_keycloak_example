@@ -115,9 +115,6 @@
     "egulias/email-validator": {
         "version": "3.1.2"
     },
-    "erusev/parsedown": {
-        "version": "1.7.4"
-    },
     "firebase/php-jwt": {
         "version": "v6.0.0"
     },
@@ -487,9 +484,6 @@
             "config/packages/twig.yaml",
             "templates/base.html.twig"
         ]
-    },
-    "symfony/twig-pack": {
-        "version": "v1.0.1"
     },
     "symfony/uid": {
         "version": "v6.0.3"
