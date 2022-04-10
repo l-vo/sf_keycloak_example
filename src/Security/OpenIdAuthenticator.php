@@ -107,11 +107,11 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): RedirectResponse
     {
         $request->getSession()->getFlashBag()->add(
-            'error',
+            'danger',
             'An authentication error occured',
         );
 
-        return new RedirectResponse($this->urlGenerator->generate('homepage'));
+        return new RedirectResponse($this->urlGenerator->generate('blog_index'));
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response
