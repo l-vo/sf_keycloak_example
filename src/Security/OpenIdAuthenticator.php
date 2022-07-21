@@ -20,7 +20,6 @@ use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterf
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticatedUserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Uid\Uuid;
@@ -44,7 +43,7 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
         return 'openid_redirecturi' === $request->attributes->get('_route');
     }
 
-    public function authenticate(Request $request): PassportInterface
+    public function authenticate(Request $request): Passport
     {
         $sessionState = $request->getSession()->get(self::STATE_SESSION_KEY);
         $queryState = $request->get(self::STATE_QUERY_KEY);
@@ -123,9 +122,9 @@ class OpenIdAuthenticator extends AbstractAuthenticator implements Authenticatio
         return new RedirectResponse(sprintf('%s?%s', $this->authorizationEndpoint, $qs));
     }
 
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
+    public function createToken(Passport $passport, string $firewallName): TokenInterface
     {
-        $token = parent::createAuthenticatedToken($passport, $firewallName);
+        $token = parent::createToken($passport, $firewallName);
 
         if (!$passport instanceof Passport) {
             throw new \LogicException(sprintf('Passport must be a subclass of %s, %s given', Passport::class, get_class($passport)));
