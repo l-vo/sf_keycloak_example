@@ -50,8 +50,12 @@ KEYCLOAK_CLIENTSECRET=624e2565-a612-4255-9522-35d27636e8c7
 KEYCLOAK_PK="-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhHUOz9Fwkx9TFR07flcEmn2aVCxKM9dLhTBvHwOYLzCSETWk3/lf/xwg/f2sicrsY2W/EZLrpDyKZSCuSzwbPp7DLSN9Ww8DnLJNLxFWL+LXgSY+IqoUZSKq/lPS/2N4bW61kz7clVgOMI1iWt2I+FAs6oRLfDRbOjIVWgMyT1W/pSrX5Y6nR8Q1VE+MfCE0QAlsYLpb9vxuh4jiOkpY+P+RqSj1ciTxuqic/k0HOvAaI1vJmIdJe3iQlVK/lxzHlaB+nY20WdVV2LVlFthvCVO6pH+I+pbHk1NkgYmXoKsm+on7epazT7Bg1K8eVpumcBG2sPX9R04RL5hz4WmWwwIDAQAB
 -----END PUBLIC KEY-----"
+KEYCLOAK_VERIFY_PEER=false
+KEYCLOAK_VERIFY_HOST=false
 ```
 Replace `KEYCLOAK_CLIENTSECRET` and `KEYCLOAK_PK` content by your own values you have previously copied.
+
+Update `KEYCLOAK_VERIFY_PEER` and `KEYCLOAK_VERIFY_HOST` by true if you want to verify the TLS from them peer and Keyclock server.
 
 ## Start the Symfony application
 
