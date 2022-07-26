@@ -55,7 +55,7 @@ KEYCLOAK_VERIFY_HOST=false
 ```
 Replace `KEYCLOAK_CLIENTSECRET` and `KEYCLOAK_PK` content by your own values you have previously copied.
 
-Update `KEYCLOAK_VERIFY_PEER` and `KEYCLOAK_VERIFY_HOST` by true if you want to verify the TLS from them peer and Keyclock server.
+Update `KEYCLOAK_VERIFY_PEER` and `KEYCLOAK_VERIFY_HOST` by true if you want to verify the peer/host when calling the Keyclock server.
 
 ## Start the Symfony application
 
