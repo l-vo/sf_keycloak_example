@@ -46,7 +46,6 @@ final class OpenIdClient
     {
         $response = $this->httpClient->request('POST', $this->tokenEndpoint, [
             'body' => $body,
-            //Remove SSL peer certificate
             'verify_peer' => $this->verifyPeer,
             'verify_host' => $this->verifyHost
         ]);
@@ -63,7 +62,6 @@ final class OpenIdClient
                 'client_secret' => $this->clientSecret,
                 'refresh_token' => $refreshToken,
             ],
-            //Remove SSL peer certificate
             'verify_peer' => $this->verifyPeer,
             'verify_host' => $this->verifyHost
         ]);
