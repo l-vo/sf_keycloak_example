@@ -14,7 +14,11 @@ final class OpenIdClient
         private string                $clientSecret,
         private string                $tokenEndpoint,
         private string                $logoutEndpoint,
-    ) {}
+        private string                $verifyPeer,
+        private string                $verifyHost
+    )
+    {
+    }
 
     public function getTokenFromAuthorizationCode(string $authorizationCode): string
     {
@@ -23,7 +27,7 @@ final class OpenIdClient
             'client_secret' => $this->clientSecret,
             'grant_type' => 'authorization_code',
             // Force http since working on localhost
-            'redirect_uri' => 'http:'.$this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::NETWORK_PATH),
+            'redirect_uri' => 'http:' . $this->urlGenerator->generate('openid_redirecturi', [], UrlGeneratorInterface::NETWORK_PATH),
             'code' => $authorizationCode,
         ]);
     }
@@ -40,9 +44,10 @@ final class OpenIdClient
 
     private function callTokenEntryPoint(array $body): string
     {
-        //dump($this->keycloakClient);
         $response = $this->httpClient->request('POST', $this->tokenEndpoint, [
             'body' => $body,
+            'verify_peer' => $this->verifyPeer,
+            'verify_host' => $this->verifyHost
         ]);
 
         return $response->getContent();
@@ -56,7 +61,9 @@ final class OpenIdClient
                 'client_id' => $this->clientId,
                 'client_secret' => $this->clientSecret,
                 'refresh_token' => $refreshToken,
-            ]
+            ],
+            'verify_peer' => $this->verifyPeer,
+            'verify_host' => $this->verifyHost
         ]);
     }
 }
