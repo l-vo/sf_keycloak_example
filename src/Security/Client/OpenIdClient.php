@@ -14,8 +14,8 @@ final class OpenIdClient
         private string                $clientSecret,
         private string                $tokenEndpoint,
         private string                $logoutEndpoint,
-        private string                $verifyPeer,
-        private string                $verifyHost
+        private bool                  $verifyPeer,
+        private bool                  $verifyHost
     )
     {
     }

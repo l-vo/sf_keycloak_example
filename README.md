@@ -59,7 +59,7 @@ Update `KEYCLOAK_VERIFY_PEER` and `KEYCLOAK_VERIFY_HOST` by true if you want to 
 
 ## Start the Symfony application
 
-For the sake of simplicity, we use the [Symfony local web server](https://symfony.com/doc/5.4/setup/symfony_server.html). At least PHP 8.1 is needed to run the application. Start the server:
+For the sake of simplicity, we use the [Symfony local web server](https://symfony.com/doc/5.4/setup/symfony_server.html). At least PHP 8.0 is needed to run the application. Start the server:
 
 ```bash
 $ symfony serve -d
