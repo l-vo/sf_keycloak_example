@@ -11,8 +11,8 @@ parameters:
     app.keycloak_logout_endpoint: '%app.keycloak_base%/protocol/openid-connect/logout'
     app.keycloak_clientid: '%env(KEYCLOAK_CLIENDID)%'
     app.keycloak_clientsecret: '%env(KEYCLOAK_CLIENTSECRET)%'
-    app.keycloak_verify_peer: '%env(KEYCLOAK_VERIFY_PEER)%'
-    app.keycloak_verify_host: '%env(KEYCLOAK_VERIFY_HOST)%'
+    app.keycloak_verify_peer: '%env(bool:KEYCLOAK_VERIFY_PEER)%'
+    app.keycloak_verify_host: '%env(bool:KEYCLOAK_VERIFY_HOST)%'
 
 services:
     # default configuration for services in *this* file
