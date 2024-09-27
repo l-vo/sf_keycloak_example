@@ -49,7 +49,7 @@ final class IdTokenDataExtractor
         }
 
         if (!isset($decoded->email, $decoded->preferred_username, $decoded->name, $decoded->realm_access->roles)) {
-            throw new IdTokenException('email, username, name, or roles is missing');
+            throw new IdTokenException(sprintf('email, username, name, or roles is missing; content: %s', json_encode($decoded)));
         }
 
         return new IdTokenData(
